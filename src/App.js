@@ -73,8 +73,9 @@ function App() {
 
   return (
     <div className="App">
-      <button onClick={handleClick} style={{display: "block", margin: "auto"}}>Switch camera</button>
+      
       <header className="App-header">
+      <button onClick={handleClick} style={{ margin: "auto", padding: "2rem", marginTop:"40rem"}}>Switch camera</button>
         <Webcam
           ref={webcamRef}
           muted={true}
