@@ -3,7 +3,6 @@ import React, { useRef, useState, useEffect } from "react";
 import * as tf from "@tensorflow/tfjs";
 import * as cocossd from "@tensorflow-models/coco-ssd";
 import Webcam from "react-webcam";
-import WebcamCapture from "./WebcamCapture";
 import "./App.css";
 import { drawRect } from "./utilities";
 
@@ -67,15 +66,50 @@ function App() {
     }
   };
 
+  const [currentPos, setCurrentPos] = useState({x: 0,
+    y: 0});
+  const [startPos, setStartPos] = useState({
+    x: 0,
+    y: 0
+  });
+  const [distance, setDistance] = useState(0);
+
+  const handleMouseDown = (event) => {
+    // console.log(startPos);
+    setCurrentPos({
+      x: event.clientX,
+      y: event.clientY,
+    });
+    setStartPos(currentPos);
+    const dx = currentPos.x - startPos.x;
+    const dy = currentPos.y - startPos.y;
+    const result = Math.sqrt(dx * dx + dy * dy);
+
+    setDistance(result);
+  };
+
+  // const handleMouseUp = (event) => {
+  //   setEndPos({ x: event.clientX, y: event.clientY });
+  //   console.log(endPos);
+  // };
+  // const calculateDistance = () => {
+  //   const dx = endPos.x - startPos.x;
+  //   const dy = endPos.y - startPos.y;
+  //   return Math.sqrt(dx * dx + dy * dy);
+  // };
   useEffect(() => {
     runCoco();
   }, []);
 
   return (
     <div className="App">
-      
       <header className="App-header">
-      <button onClick={handleClick} style={{ margin: "auto", padding: "2rem", marginTop:"40rem"}}>Switch camera</button>
+        <button
+          onClick={handleClick}
+          style={{ margin: "auto", padding: "2rem", marginTop: "4rem" }}
+        >
+          Switch camera
+        </button>
         <Webcam
           ref={webcamRef}
           muted={true}
@@ -97,7 +131,7 @@ function App() {
             facingMode,
           }}
         />
-       
+
         <canvas
           ref={canvasRef}
           style={{
@@ -111,9 +145,26 @@ function App() {
             width: 640,
             height: 480,
           }}
+          onMouseDown={handleMouseDown}
+          // onMouseUp={handleMouseUp}
         />
+        {
+          startPos.x !== 0 &&
+          startPos.y !== 0 &&
+          currentPos.x !== 0 &&
+          currentPos.y !== 0 &&(<div style={{marginTop:"30rem"}}><p>Touch or click on the object to measure its size.</p>
+          <p>Previous Position: {JSON.stringify(startPos)}</p>
+          <p>Current Position: {JSON.stringify(currentPos)}</p>
+          <p>Distance: {distance} pixels</p></div>)
+        }
+        
+        {/* {startPos.x !== 0 &&
+          startPos.y !== 0 &&
+          endPos.x !== 0 &&
+          endPos.y !== 0 && (
+            
+          )} */}
       </header>
-      
     </div>
   );
 }

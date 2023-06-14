@@ -4,7 +4,8 @@ export const drawRect = (detections, ctx) =>{
 
     // Extract boxes and classes
     const [x, y, width, height] = prediction['bbox']; 
-    const text = prediction['class']; 
+    const text1 = prediction['class']; 
+    const text2 = `Width: ${width} Height: ${height}`;
 
     // Set styling
     const color = Math.floor(Math.random()*16777215).toString(16);
@@ -14,7 +15,8 @@ export const drawRect = (detections, ctx) =>{
     // Draw rectangles and text
     ctx.beginPath();   
     ctx.fillStyle = '#' + color
-    ctx.fillText(text, x, y);
+    ctx.fillText(text1, x, y);
+    ctx.fillText(text2, y, x);
     ctx.rect(x, y, width, height); 
     ctx.stroke();
   });
