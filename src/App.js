@@ -8,6 +8,23 @@ import "./App.css";
 import { drawRect } from "./utilities";
 
 function App() {
+  const FACING_MODE_USER = { exact: "user" };
+  const FACING_MODE_ENVIRONMENT = { exact: "environment" };
+
+  const videoConstraints = {
+    facingMode: FACING_MODE_USER,
+  };
+
+  const [facingMode, setFacingMode] = useState(FACING_MODE_USER);
+
+  const handleClick = React.useCallback(() => {
+    setFacingMode((prevState) =>
+      prevState === FACING_MODE_USER
+        ? FACING_MODE_ENVIRONMENT
+        : FACING_MODE_USER
+    );
+  }, []);
+
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
 
@@ -46,18 +63,21 @@ function App() {
 
       // Draw mesh
       const ctx = canvasRef.current.getContext("2d");
-      drawRect(obj, ctx); 
+      drawRect(obj, ctx);
     }
   };
 
-  useEffect(()=>{runCoco()},[]);
+  useEffect(() => {
+    runCoco();
+  }, []);
 
   return (
     <div className="App">
+      <button onClick={handleClick} style={{display: "block", margin: "auto"}}>Switch camera</button>
       <header className="App-header">
-        <WebcamCapture
+        <Webcam
           ref={webcamRef}
-          muted={true} 
+          muted={true}
           style={{
             position: "absolute",
             marginLeft: "auto",
@@ -69,8 +89,14 @@ function App() {
             width: 640,
             height: 480,
           }}
+          audio={false}
+          screenshotFormat="image/jpeg"
+          videoConstraints={{
+            ...videoConstraints,
+            facingMode,
+          }}
         />
-
+       
         <canvas
           ref={canvasRef}
           style={{
@@ -86,6 +112,7 @@ function App() {
           }}
         />
       </header>
+      
     </div>
   );
 }
